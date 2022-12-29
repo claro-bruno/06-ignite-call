@@ -9,7 +9,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { api } from '../../lib/axios'
 import { Container, Form, FormError, Header } from './styles'
-import { PrismaClient, Prisma } from '@prisma/client'
 
 const registerFormSchema = z.object({
   username: z
@@ -49,6 +48,8 @@ export default function Register() {
         name: data.name,
         username: data.username,
       })
+
+      await router.push('/register/connect-calendar')
     } catch (err) {
       if (err instanceof AxiosError && err?.response?.data.messsage) {
         alert(err?.response?.data.messsage)
