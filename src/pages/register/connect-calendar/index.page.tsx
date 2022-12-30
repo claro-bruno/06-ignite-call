@@ -2,13 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Heading, MultiStep, Text, TextInput } from '@ignite-ui/react'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
-import { ArrowRight } from 'phosphor-react'
+import { ArrowRight, Check } from 'phosphor-react'
 import { z } from 'zod'
 import { api } from '../../../lib/axios'
 import { Container, Header } from '../styles'
 import { PrismaClient, Prisma } from '@prisma/client'
-import { ConnectBox, ConnectItem } from './styles'
-import { signIn } from 'next-auth/react'
+import { AuthError, ConnectBox, ConnectItem } from './styles'
+import { signIn, useSession } from 'next-auth/react'
 
 const registerFormSchema = z.object({
   username: z
@@ -35,6 +35,10 @@ export default function Register() {
   //   })
 
   const router = useRouter()
+  const session = useSession()
+
+  const hasAuthError = !!router.query.error
+  const isSignIn = session.status === 'authenticated'
 
   async function handleRegister(data: RegisterFormData) {}
 
@@ -55,12 +59,28 @@ export default function Register() {
       <ConnectBox>
         <ConnectItem>
           <Text>Google Calendar</Text>
-          <Button variant="secondary" size="sm" onClick={handleConnectCalendar}>
-            Conectar
-            <ArrowRight />
-          </Button>
+          {isSignIn ? (
+            <Button size="sm" disabled>
+              Conectado <Check />
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleConnectCalendar}
+            >
+              Conectar
+              <ArrowRight />
+            </Button>
+          )}
         </ConnectItem>
-        <Button type="submit">
+        {hasAuthError && (
+          <AuthError size="sm">
+            Falha ao se conectar ao Google, verifique se voce habilitou as
+            permissões de acesso ao Google Calendar
+          </AuthError>
+        )}
+        <Button type="submit" disabled={!isSignIn}>
           Próximo Passo
           <ArrowRight />
         </Button>
