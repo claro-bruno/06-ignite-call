@@ -107,7 +107,7 @@ export default function TimeIntervals() {
       intervals,
     })
 
-    // await router.push('/register/update-profile')
+    await router.push('/register/update-profile')
   }
 
   return (

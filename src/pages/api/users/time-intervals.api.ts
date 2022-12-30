@@ -35,7 +35,6 @@ export default async function handler(
   // safeParse, faz o parse mas não retorna o erro
   const { intervals } = timeIntervalsBodySchema.parse(req.body)
 
-  console.log(intervals)
   await intervals.reduce(async (memo: any, interval) => {
     await memo
     await prisma.userTimeInterval.create({
